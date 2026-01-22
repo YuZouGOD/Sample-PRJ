@@ -1,0 +1,50 @@
+{
+  "name": "instalador-app",
+  "version": "1.0.0",
+  "main": "electron-main/main.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"wait-on http://localhost:3000 && npm run dev:electron\"",
+    "dev:frontend": "cd electron-frontend && npm start",
+    "dev:electron": "cross-env NODE_ENV=development electron . --ozone-platform=x11",
+    "build": "npm run build:frontend && electron-builder",
+    "build:frontend": "cd electron-frontend && npm run build",
+    "package:win": "npm run build:frontend && electron-builder --win",
+    "package:mac": "npm run build:frontend && electron-builder --mac",
+    "package:linux": "npm run build:frontend && electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.tuproyecto.instalador",
+    "productName": "Mi Instalador de Servicios",
+    "files": [
+      "electron-main/**/*",
+      "electron-frontend/build/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "server-services",
+        "to": "server-services",
+        "filter": ["**/*"]
+      }
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^30.0.0",
+    "electron-builder": "^24.0.0",
+    "wait-on": "^7.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}

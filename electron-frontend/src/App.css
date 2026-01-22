@@ -1,0 +1,56 @@
+/* Puedes dejarlo vacío por ahora o añadir esto */
+body {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+
+    padding: 1rem 3rem;
+
+    background-color: #0f172a;
+    color: white;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.installer-container {
+    background-color: #1c2d53;
+    padding: 1rem;
+    border-radius: 2mm;
+    border: 1px solid color-mix(in srgb, #1c2d53 80%, white);
+}
+
+.step {
+    gap: 0rem !important;
+}
+
+button {
+    background-color: #1c2d53;
+    color: white;
+    border: 1px solid color-mix(in srgb, #1c2d53 80%, white);
+    border-radius: 2mm;
+    padding: 0.3rem 1rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2a3d63;
+}
+
+button.alt {
+    background-color: #c91919;
+    border: 1px solid color-mix(in srgb, #c91919 80%, white);
+}
+
+button.alt:hover {
+    background-color: #b83f3f;
+}
+
+input[type="text"] {
+    background-color: white;
+    color: #1a232f;
+    border: 1px solid color-mix(in srgb, #1c2d53 40%, white);
+    border-radius: .8mm;
+    padding: 0.3rem 1rem;
+    cursor: pointer;
+    outline: none;
+}

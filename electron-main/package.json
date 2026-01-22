@@ -1,0 +1,59 @@
+{
+    "name": "instalador-app",
+    "version": "1.0.0",
+    "main": "electron-main/main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "npm run build-frontend && npm run build-electron",
+        "build-frontend": "cd electron-frontend && npm run build",
+        "build-electron": "electron-builder",
+        "package:win": "electron-builder --win",
+        "package:mac": "electron-builder --mac",
+        "package:linux": "electron-builder --linux"
+    },
+    "devDependencies": {
+        "electron": "^25.0.0",
+        "electron-builder": "^24.0.0",
+        "concurrently": "^8.0.0"
+    },
+    "build": {
+        "appId": "com.example.instalador",
+        "productName": "Mi Aplicación",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "electron-main/**/*",
+            "electron-frontend/build/**/*",
+            "server-services/**/*",
+            "node_modules/**/*"
+        ],
+        "extraResources": [
+            {
+                "from": "server-services",
+                "to": "server-services",
+                "filter": [
+                    "**/*"
+                ]
+            }
+        ],
+        "win": {
+            "target": "nsis",
+            "icon": "assets/icon.ico"
+        },
+        "mac": {
+            "target": "dmg",
+            "icon": "assets/icon.icns"
+        },
+        "linux": {
+            "target": "AppImage",
+            "icon": "assets/icon.png"
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true
+        }
+    }
+}

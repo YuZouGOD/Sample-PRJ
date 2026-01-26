@@ -54,7 +54,16 @@ ipcMain.handle('check-docker', async () => {
 });
 
 ipcMain.handle('check-docker-compose', async () => {
-    return new Promise((resolve) => exec('docker-compose --version', (err) => resolve(!err)));
+    return new Promise((resolve) => {
+        // Intentamos primero con el comando moderno
+        exec('docker compose version', (err) => {
+            if (!err) return resolve(true);
+            // Si falla, intentamos con el ejecutable antiguo
+            exec('docker-compose --version', (err2) => {
+                resolve(!err2);
+            });
+        });
+    });
 });
 
 ipcMain.handle('start-services', async (event, installPath) => {

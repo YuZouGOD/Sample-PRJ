@@ -55,12 +55,13 @@ ipcMain.handle('check-docker', async () => {
 
 ipcMain.handle('check-docker-compose', async () => {
     return new Promise((resolve) => {
-        // Intentamos primero con el comando moderno
+        // Try modern command first (works on Windows/Mac/Linux with Docker Desktop)
         exec('docker compose version', (err) => {
-            if (!err) return resolve(true);
-            // Si falla, intentamos con el ejecutable antiguo
+            if (!err) return resolve({ available: true, modern: true });
+
+            // Fallback to legacy standalone binary
             exec('docker-compose --version', (err2) => {
-                resolve(!err2);
+                resolve({ available: !err2, modern: false });
             });
         });
     });
@@ -75,16 +76,29 @@ ipcMain.handle('start-services', async (event, installPath) => {
     const localIP = getLocalIP();
     const secretPassword = crypto.randomBytes(8).toString('hex');
 
-    return new Promise((resolve, reject) => {
-        const cmd = process.platform === 'win32' ? 'docker' : 'docker-compose';
-        const args = process.platform === 'win32'
-            ? ['compose', '-f', composePath, 'up', '-d']
-            : ['-f', composePath, 'up', '-d'];
+    // Detect which docker compose command is available
+    const composeCheck = await new Promise((resolve) => {
+        exec('docker compose version', (err) => {
+            if (!err) return resolve({ cmd: 'docker', args: ['compose'] });
 
-        dockerProcess = spawn(cmd, args, {
+            exec('docker-compose --version', (err2) => {
+                if (!err2) return resolve({ cmd: 'docker-compose', args: [] });
+                resolve(null);
+            });
+        });
+    });
+
+    if (!composeCheck) {
+        return { success: false, error: 'Docker Compose no está disponible' };
+    }
+
+    return new Promise((resolve, reject) => {
+        const args = [...composeCheck.args, '-f', composePath, 'up', '-d'];
+
+        dockerProcess = spawn(composeCheck.cmd, args, {
             env: { ...process.env, MONGO_PASS: secretPassword },
-            // Solo usamos shell en Windows para evitar el warning de seguridad y errores en Linux
-            shell: process.platform === 'win32'
+            // Only use shell on Windows if using docker-compose.exe
+            shell: process.platform === 'win32' && composeCheck.cmd === 'docker-compose'
         });
 
         dockerProcess.on('error', (err) => {

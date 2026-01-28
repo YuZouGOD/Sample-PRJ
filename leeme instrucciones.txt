@@ -1,0 +1,7 @@
+tienes que abrir la carpeta esta en la terminal
+
+npm install
+cd ./electron-frontend/
+npm install
+cd ..
+npm run dev

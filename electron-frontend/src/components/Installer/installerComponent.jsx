@@ -59,6 +59,11 @@ function Installer() {
             {step === 1 && (
                 <div className="space-y-4 text-center">
                     <h2 className="text-xl">Verificando requisitos...</h2>
+                    
+                    <p>Docker installed: {(dockerInstalled ? "yes" : "no")}</p>
+
+                    <p>Docker Compose installed: {(dockerComposeInstalled ? "yes" : "no")}</p>
+
                     <button onClick={checkRequirements} className="bg-blue-600 px-4 py-2 rounded">Reintentar</button>
                 </div>
             )}
